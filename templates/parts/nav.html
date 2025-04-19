@@ -1,0 +1,124 @@
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-dark">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <a href="{% url 'index' %}" class="nav-link">الصفحة الرئيسية</a>
+    </li>
+  </ul>
+
+  <!-- SEARCH FORM -->
+  <form method="GET" action="{% url 'books' %}" class="form-inline ml-3">
+    <div class="input-group input-group-sm">
+      <input class="form-control form-control-navbar" name="search_name" type="search" placeholder="ابحث هنا" aria-label="Search">
+      <div class="input-group-append">
+        <button class="btn btn-navbar" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+</nav>
+<!-- /.navbar -->
+<style>
+  /* تحسين مظهر Navbar */
+.main-header.navbar {
+  background-color: #343a40; /* خلفية داكنة للناف بار */
+  color: #fff; /* نص أبيض */
+  border-bottom: 1px solid #444; /* حد خفيف تحت الناف بار */
+}
+
+/* تنسيق الأزرار داخل Navbar */
+.main-header .nav-link {
+  color: #fff; /* نص أبيض */
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* تأثير hover على الروابط */
+.main-header .nav-link:hover {
+  background-color: #007bff; /* إضافة لون عند التمرير */
+  color: #fff;
+  border-radius: 5px; /* حواف دائرية عند التمرير */
+}
+
+/* تغيير تأثير البحث داخل Navbar */
+.main-header .form-control-navbar {
+  background-color: #495057; /* خلفية داكنة لحقل البحث */
+  color: #fff; /* نص أبيض داخل حقل البحث */
+  border-radius: 25px; /* حواف دائرية */
+}
+
+.main-header .btn-navbar {
+  background-color: #007bff; /* لون أزرق للأزرار */
+  color: #fff;
+  border-radius: 50%;
+}
+
+/* تأثير hover على زر البحث */
+.main-header .btn-navbar:hover {
+  background-color: #0056b3; /* تغيير اللون عند التمرير */
+}
+
+/* تحسين التباعد بين العناصر في Navbar */
+.navbar-nav {
+  margin-left: auto; /* دفع العناصر إلى اليمين */
+}
+
+.navbar-nav .nav-item {
+  margin-left: 15px;
+}
+
+/* تحسين التباعد بين العناصر في Navbar */
+.navbar-nav .nav-item:first-child {
+  margin-left: 0;
+}
+
+/* تعديل شكل مربع البحث */
+.form-inline {
+  position: relative;
+}
+
+.form-inline .input-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.form-inline .input-group .form-control {
+  border-radius: 50px; /* إبقاء الشكل دائري */
+  transition: all 0.3s ease-in-out;
+  width: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+/* تغيير شكل الـ input عند الفليب */
+.form-inline .input-group:hover .form-control {
+  border-radius: 50px 5px 5px 50px; /* تغيير الحواف لتكون مستديرة في الجهة اليمنى */
+  width: 300px;
+}
+
+.form-inline .input-group .btn-navbar {
+  background-color: #007bff;
+  border: none;
+  border-radius: 50%;
+  padding: 10px 15px;
+  margin-left: 5px;
+  transition: transform 0.3s ease;
+}
+
+/* إضافة تأثير عند المرور بالماوس على الـ زر البحث */
+.form-inline .input-group:hover .btn-navbar {
+  transform: rotate(180deg); /* فليب الزر */
+}
+
+
+</style>
+
+

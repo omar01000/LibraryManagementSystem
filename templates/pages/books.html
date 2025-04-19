@@ -1,0 +1,238 @@
+   {% extends "base.html" %}
+   {% load static %}
+<!-- في المكان ده هحط المحتوى -->
+
+
+  {% block content %}
+    <div style="direction: rtl;" class="wrapper">
+      <!-- Content Wrapper. Contains page content -->
+      <div   class="content-wrapper p-5">
+        <!-- Content Header (Page header) -->
+
+                <div class="row mb-2">
+                  <div class="col-sm-6">
+                    <h1>الكتب</h1>
+                  </div>
+   
+                </div>
+            </section>
+        
+            <!-- Main content -->
+            <section class="content">                  
+              <!-- Default box -->
+              <div class="card card-solid">
+                <div class="card-body pb-0">
+                  <div class="row d-flex align-items-stretch">
+                    <!-- بداية الكتاب -->
+{% for book in books %}
+  <div class="col-md-4 book-item" data-category="{{ book.category.id }}" data-status="{{ book.status }}">
+    <div class="card custom-card">
+      <div class="card-header text-center text-muted">
+        <strong>{{ book.category }}</strong>
+      </div>
+      <div class="card-body text-center">
+        <!-- الكتاب -->
+        <h4 class="lead text-dark"><b>{{ book.title }}</b></h4>
+        <ul class="fa-ul text-muted">
+          <li class="small">
+            <span class="fa-li"></span>الحالة: 
+            {% if book.status == 'Available' %}
+              <span class="badge badge-success">متاح</span>
+            {% elif book.status == 'Sold' %}
+              <span class="badge badge-danger">تم البيع</span>
+            {% else %}
+              <span class="badge badge-warning">استعارة</span>
+            {% endif %}
+          </li>
+          <li class="small">
+            <span class="fa-li"></span>
+            {% if book.price %}
+              السعر: {{ book.price }} ج.م
+            {% elif book.rental_price_day %}
+              <span style="font-size: 10px;">السعر لليوم:</span> {{ book.rental_price_day }} ج.م
+            {% endif %}
+          </li>
+        </ul>
+        <!-- صورة الكتاب -->
+        <div class="col-12 text-center">
+          {% if book.photo_author %}
+            <img class="img-fluid rounded-circle custom-img" src="{{ book.photo_author.url }}" alt="User Avatar">
+          {% else %}
+            <img class="img-fluid rounded-circle custom-img" src="{% static 'dist/img/photo1.png' %}" alt="User Avatar">
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-footer text-right">
+        <a href="{% url 'delete' book.id %}" class="btn btn-sm btn-danger custom-btn">
+          <i class="fas fa-trash"></i> حذف
+        </a>
+        <a href="{% url 'update' book.id %}" class="btn btn-sm btn-primary custom-btn">
+          <i class="fas fa-edit"></i> تعديل
+        </a>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+
+
+<style>
+/* تحسين مظهر الكارد */
+.custom-card {
+  border-radius: 15px; /* حواف دائرية للكارد */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* زيادة تأثير الظل */
+  margin-bottom: 20px;
+  background-color: #fff; /* خلفية بيضاء */
+  padding: 15px;
+  transition: transform 0.3s ease-in-out; /* إضافة تأثير عند مرور الماوس */
+}
+
+/* إضافة تأثير عند مرور الماوس على الكارد */
+.custom-card:hover {
+  transform: scale(1.05); /* تكبير الكارد قليلاً عند مرور الماوس */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* زيادة الظل */
+}
+
+/* تنسيق العنوان داخل الكارد */
+.card-header {
+  background-color: #f8f9fa;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding: 15px;
+}
+
+/* تنسيق النصوص داخل الجسم */
+.card-body {
+  padding: 20px;
+  text-align: center;
+}
+
+/* تحسين شكل الصورة */
+.custom-img {
+  border-radius: 50%; /* جعل الصورة دائرية */
+  object-fit: cover;
+  border: 4px solid #fff; /* حدود بيضاء حول الصورة */
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1); /* تأثير الظل للصورة */
+  margin-top: 20px;
+  height: 140px; /* زيادة حجم الصورة قليلاً */
+  width: 140px; /* زيادة حجم الصورة قليلاً */
+}
+
+/* تحسين الأزرار */
+.card-footer .custom-btn {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+/* زر الحذف */
+.custom-btn.btn-danger {
+  background-color: #dc3545;
+  border: none;
+}
+
+/* زر التعديل */
+.custom-btn.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+/* تأثير hover على الأزرار */
+.custom-btn:hover {
+  opacity: 0.8;
+  transform: scale(1.05); /* تكبير الزر عند المرور عليه */
+}
+
+/* تحسين عرض النصوص في القائمة */
+ul.fa-ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul.fa-ul li {
+  margin-bottom: 5px;
+}
+
+ul.fa-ul .fa-li {
+  margin-left: 10px;
+}
+
+/* جعل العنوان أكثر وضوحًا */
+h4.lead {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px; /* زيادة المسافة بين العنوان وبقية النصوص */
+}
+
+/* تحسين مظهر الأزرار في الكارد */
+.card-footer {
+  display: flex;
+  justify-content: space-between; /* توزيع الأزرار على المساحة المتاحة */
+  align-items: center; /* محاذاة الأزرار في المنتصف */
+  padding: 10px; /* إضافة مسافة حول الأزرار */
+}
+
+/* تحسين مظهر الأزرار */
+.custom-btn {
+  width: 48%; /* جعل الأزرار تأخذ مساحة معقولة داخل الحافة */
+  margin: 0; /* إزالة أي مسافة إضافية حول الأزرار */
+  padding: 10px; /* زيادة حجم الأزرار */
+  font-size: 0.9rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  text-align: center; /* محاذاة النص في منتصف الزر */
+}
+
+/* زر الحذف */
+.custom-btn.btn-danger {
+  background-color: #dc3545;
+  border: none;
+}
+
+/* زر التعديل */
+.custom-btn.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+/* تأثير hover على الأزرار */
+.custom-btn:hover {
+  opacity: 0.8;
+  transform: scale(1.05); /* تكبير الزر عند المرور عليه */
+}
+
+
+</style>
+                     
+
+{% if search_message %}
+  <div class="alert alert-info w-100 text-center">
+    {{ search_message }}
+  </div>
+{% endif %}
+                   
+                  </div>
+                </div>
+                <!-- /.card-body -->
+  
+                <!-- /.card-footer -->
+              </div>
+              <!-- /.card -->
+        
+            </section>
+            <!-- /.content -->
+          </div>
+          <!-- /.content-wrapper -->
+        
+      </div>
+      <!-- /.content-wrapper -->
+    </div>
+  
+  
+  
+  {% endblock content %}

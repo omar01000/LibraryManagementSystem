@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+{% load static %}
+{% load form_tags %}
+
+
+
+<!-- في المكان ده هحط المحتوى -->
+
+
+  {% block content %}
+    <div style="direction: rtl;" class="wrapper">
+
+
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Flex Container to Align Charts Side by Side -->
+        <div class="col-lg-12 d-flex justify-content-between">
+        
+          <!-- Left Card: Total Books -->
+     <div class="card flex-fill">
+  <div class="card-header">
+    <h3 class="card-title font-weight-bold" style="color: white;" >اجمالي عدد الكتب</h3>
+  </div>
+  <div class="card-body">
+    <div class="d-flex flex-column align-items-center mb-4">
+      <p class="text-bold">{{ allbooks }}</p> <!-- Larger font for the count -->
+    </div>
+    <div class="position-relative">
+      <canvas id="visitors-chart" height="300"></canvas> <!-- Adding the chart here -->
+    </div>
+  </div>
+</div>
+
+
+
+          <!-- Right Card: Total Profits -->
+        <div class="card flex-fill shadow-sm" >
+            <div class="card-header " style="background-color: #0069d9;color:white">
+              <h3 class="card-title mb-0" style="color:white;">📈 الأرباح</h3>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <p class="mb-1 text-muted">إجمالي الأرباح</p>
+                  <h4 class="font-weight-bold text-success" id="totalsalarys">${{ total_profit }}</h4>
+                </div>
+                <i class="fas fa-coins fa-2x text-success"></i>
+              </div>
+              <!-- Pie chart -->
+              <div class="position-relative mb-4">
+                <canvas id="sales-chart" height="300"></canvas> <!-- Same height for both charts -->
+              </div>
+              <!-- Profit Distribution -->
+              <div class="d-flex justify-content-around mt-4">
+                <div class="text-center">
+                  <i class="fas fa-book-reader text-warning"></i><br>
+                  <small>من استعارة الكتب</small>
+                  <p class="mb-0 font-weight-bold" id="rentedtotals">${{ total_rentals }}</p>
+                </div>
+                <div class="text-center">
+                  <i class="fas fa-book text-primary"></i><br>
+                  <small>من بيع الكتب</small>
+                  <p class="mb-0 font-weight-bold" id="soldtotals">${{ total_sales }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div> <!-- End of Flex Container -->
+      </div>
+   
+
+<style>
+  /* Flexbox layout to make sure both charts are side by side */
+.d-flex {
+    display: flex;
+    justify-content: space-between; /* Space them equally */
+    gap: 20px; /* Adjust gap between the two cards */
+}
+
+/* Set the same height for both charts */
+canvas {
+    height: 300px !important; /* Ensures both charts are the same height */
+    width: 100% !important; /* Ensures the charts stretch to the width of the container */
+}
+
+/* Flex fill to make sure both cards take equal width */
+.card.flex-fill {
+    flex: 1;
+    margin-bottom: 20px; /* Ensures some space between the cards */
+}
+
+/* Ensure the card content is properly aligned */
+.card-body {
+    padding: 20px;
+}
+
+.card-header {
+    padding: 10px 20px;
+}
+
+/* Extra margin for chart content */
+.position-relative {
+    margin-bottom: 20px;
+}
+
+
+/* General styling adjustments for the card */
+.card {
+  border-radius: 10px; /* Rounded corners for the card */
+  margin-bottom: 20px; /* Added margin to the bottom of the card */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Title styling */
+.card-header .card-title {
+  font-size: 1.5rem; /* Slightly larger title */
+  font-weight: bold;
+  color: #333;
+}
+
+/* Center the content in the body */
+.card-body {
+  padding: 20px;
+}
+
+/* Chart container styling */
+.position-relative {
+  background-color: #f8f9fa; /* Light background for the chart container */
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow for emphasis */
+}
+
+/* Text styling */
+.text-lg {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Margin between charts and the rest of the content */
+.position-relative.mb-4 {
+  margin-bottom: 20px;
+}
+
+/* تحسين مظهر الكارد */
+.card-header {
+  background-color: #007bff; /* خلفية داكنة للعنوان */
+  font-size: 1.6rem; /* زيادة حجم الخط */
+  font-weight: bold; /* جعل الخط عريض */
+  color: #fff; /* نص أبيض */
+  text-align: center; /* محاذاة النص في المنتصف */
+  padding: 20px; /* إضافة padding */
+  border-radius: 12px; /* حواف دائرية */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* إضافة ظل خفيف */
+}
+
+/* تحسين عرض الرقم الإجمالي */
+.card-body {
+  text-align: center;
+  padding: 40px 15px;
+  color: #333;
+}
+
+/* تحسين النص */
+.card-body .text-bold {
+  font-size: 3rem; /* زيادة حجم الرقم */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px; /* إضافة مسافة تحت الرقم */
+  text-align: center; /* محاذاة الرقم في المنتصف */
+}
+
+/* تحسين الرسم البياني */
+.position-relative {
+  background-color: #f8f9fa; /* خلفية بيضاء لرسم البياني */
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* إضافة ظل حول الرسم البياني */
+}
+
+/* إضافة تأثير hover على الكارد */
+.card:hover {
+  transform: scale(1.02); /* تكبير الكارد قليلاً */
+  transition: all 0.3s ease-in-out; /* إضافة تأثير التحول */
+}
+
+
+</style>
+  
+          <!-- form add books -->
+          <div class="row m-1 mb-3">   
+            <a href="#bookform" class="btn btn-primary" data-toggle="collapse">+ اضافة كتاب</a>
+          </div>
+          
+          <div id="bookform" class="card card-primary collapse {% if form_has_error %}show{% endif %}">
+
+            <div class="card-header">
+              <h3 class="card-title">اضافة كتاب</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+           <form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+   {% if bf.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for error in bf.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <div class="card-body">
+    <div class="form-group">
+      <label>العنوان</label>
+      {{ bf.title|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+      <label>المؤلف</label>
+      {{ bf.author|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+      <label>صورة الكتاب</label>
+      {{ bf.photo_book|add_class:"form-control-file" }}
+    </div>
+    <div class="form-group">
+      <label>صورة المؤلف</label>
+      {{ bf.photo_author|add_class:"form-control-file" }}
+    </div>
+    <div class="form-group">
+      <label>عدد الصفحات</label>
+      {{ bf.pages|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+      <label>السعر</label>
+      {{ bf.price|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+      <label>السعر اليومي</label>
+      {{ bf.rental_price_day|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+      <label>مدة الإيجار</label>
+      {{ bf.rental_period|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+  <label>تكلفة الإيجار الكلية</label>
+  <input type="text" id="total_rental_display" class="form-control" readonly>
+</div>
+
+
+    <div class="form-group">
+      <label>الحالة</label>
+      {{ bf.status|add_class:"form-control" }}
+    </div>
+    <div class="form-group">
+      <label>الفئة</label>
+      {{ bf.category|add_class:"form-control" }}
+    </div>
+   
+  </div>
+
+  <div class="card-footer text-right">
+    <button type="submit" class="btn btn-success">➕ إضافة الكتاب</button>
+  </div>
+</form>
+
+          </div>
+  
+                <!-- /.card -->
+          </div>
+          <!-- end form add books -->
+  
+  
+          <!-- تصنيفات-->
+  
+          <div class="row justify-content-center mb-3">
+            <div class="col-4 ">
+              <ul class="nav">
+            <li class="nav-item">
+  <a href="#" class="nav-link bg-secondary filter-category active" data-category="all">الكل</a>
+</li>
+
+                {% for cat in categories|slice:'4' %}
+                 <li class="nav-item">
+  <a href="#" class="nav-link bg-primary filter-category" data-category="{{ cat.id }}">{{ cat.name }}</a>
+</li>
+
+                {% endfor %}
+                
+              </ul>
+            </div>
+          </div>
+          <!-- books -->
+
+          <div class="row">
+
+       
+         {% for book in books %}
+<div class="col-md-4 book-item" data-category="{{ book.category.id }}" data-status="{{ book.status }}">
+    <div class="card book-card">
+        <!-- القائمة المنسدلة -->
+        <div class="btn-group book-actions">
+            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="{% url 'update' book.id %}">
+                    <i class="fas fa-edit mr-2"></i> تعديل
+                </a>
+                <a class="dropdown-item text-danger" href="{% url 'delete' book.id %}">
+                    <i class="fas fa-trash mr-2"></i> حذف
+                </a>
+            </div>
+        </div>
+
+        <!-- صورة الكتاب -->
+        <div class="book-cover-container">
+            {% if book.photo_book %}
+                <img class="book-cover-img" src="{{ book.photo_book.url }}" alt="{{ book.title }}">
+            {% else %}
+                <img class="book-cover-img" src="{% static 'dist/img/photo1.png' %}" alt="Default Book Cover">
+            {% endif %}
+        </div>
+
+        <!-- صورة المؤلف -->
+        <div class="author-img-container">
+            {% if book.photo_author %}
+                <img src="{{ book.photo_author.url }}" alt="{{ book.author }}" class="author-img">
+            {% else %}
+                <img src="{% static 'dist/img/photo1.png' %}" alt="Default Author" class="author-img">
+            {% endif %}
+        </div>
+
+        <!-- معلومات الكتاب -->
+        <div class="book-info">
+            <h3 class="book-title">{{ book.title }}</h3>
+            <p class="book-author">{{ book.author }}</p>
+        </div>
+
+        <!-- تفاصيل الكتاب -->
+        <div class="book-details">
+            <div class="detail-item">
+                <span class="detail-value">{{ book.pages }}</span>
+                <span class="detail-label">صفحة</span>
+            </div>
+            
+            <div class="detail-item">
+                {% if book.price %}
+                    <span class="detail-value">${{ book.price }}</span>
+                    <span class="detail-label">السعر</span>
+                {% elif book.rental_price_day %}
+                    <span class="detail-value">${{ book.rental_price_day }}</span>
+                    <span class="detail-label">/يوم</span>
+                {% endif %}
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">الحالة</span>
+                {% if book.status == 'Available' %}
+                    <span class="badge badge-available">متاح</span>
+                {% elif book.status == 'Sold' %}
+                    <span class="badge badge-sold">تم البيع</span>
+                {% else %}
+                    <span class="badge badge-rented">استعارة</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+/* تصميم البطاقة الرئيسية */
+.book-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    height: 380px;
+    position: relative;
+    border: none;
+    background: #fff;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* صورة الكتاب */
+.book-cover-container {
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+}
+
+.book-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover .book-cover-img {
+    transform: scale(1.05);
+}
+
+/* صورة المؤلف */
+.author-img-container {
+    position: absolute;
+    top: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.author-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* معلومات الكتاب */
+.book-info {
+    padding: 60px 15px 15px;
+    text-align: center;
+}
+
+.book-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-author {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* تفاصيل الكتاب */
+.book-details {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 5px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.detail-item {
+    text-align: center;
+    padding: 0 5px;
+}
+
+.detail-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.detail-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #777;
+}
+
+/* شارات الحالة */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.badge-available {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-sold {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-rented {
+    background-color: #ffc107;
+    color: #333;
+}
+
+/* القائمة المنسدلة */
+.book-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+}
+
+.book-actions .btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #555;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.book-actions .dropdown-menu {
+    min-width: 120px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+</style>
+    <!-- /.content-wrapper -->
+  
+  {% endblock content %}
